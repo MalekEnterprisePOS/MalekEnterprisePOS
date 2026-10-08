@@ -1,0 +1,55 @@
+# Firebase App Hosting configuration - Malek Enterprise POS
+#
+# This file only holds NON-SECRET settings, so the rollout can never fail on a missing secret.
+# Private values (FIREBASE_ADMIN_PRIVATE_KEY, CRON_SECRET, LICENSE_SIGNING_PRIVATE_KEY, ...) stay in the
+# App Hosting environment settings in the Firebase Console, exactly where they are now.
+# Variables listed here take priority over the same names set in the Console.
+#
+# Do NOT add NODE_ENV here.
+
+runConfig:
+  cpu: 1
+  memoryMiB: 512
+  minInstances: 0
+  maxInstances: 2
+
+env:
+  # Public Firebase web config. NEXT_PUBLIC_FIREBASE_API_KEY and NEXT_PUBLIC_FIREBASE_APP_ID are intentionally NOT here:
+  # keep them in the Console environment (a key in a committed file trips GitHub secret-scanning alerts).
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: malek-enterprise-pos.firebaseapp.com
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: malek-enterprise-pos
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+    value: malek-enterprise-pos.firebasestorage.app
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+    value: "38716175247"
+    availability: [BUILD, RUNTIME]
+
+  # The standard Firestore database, in STANDARD edition / Native mode (see docs/FIRESTORE_FIX.md).
+  - variable: NEXT_PUBLIC_FIRESTORE_DATABASE_ID
+    value: "(default)"
+    availability: [BUILD, RUNTIME]
+
+  - variable: NEXT_PUBLIC_SITE_URL
+    value: https://malek-enterprise-pos--malek-enterprise-pos.us-east4.hosted.app
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_DEMO_MODE
+    value: "false"
+    availability: [BUILD, RUNTIME]
+
+  # Server-side Firebase Admin identity (not secret; the private key stays in the Console).
+  - variable: FIREBASE_ADMIN_PROJECT_ID
+    value: malek-enterprise-pos
+    availability: [RUNTIME]
+  - variable: FIREBASE_ADMIN_CLIENT_EMAIL
+    value: firebase-adminsdk-fbsvc@malek-enterprise-pos.iam.gserviceaccount.com
+    availability: [RUNTIME]
+
+# ---- Set these in the Firebase Console (App Hosting > your backend > Environment), NOT here, because they are private:
+#   PAYMENT_PROVIDER=yoco   YOCO_SECRET_KEY   YOCO_WEBHOOK_SECRET   RESEND_API_KEY   EMAIL_FROM
+#   CRON_SECRET   LICENSE_SIGNING_PRIVATE_KEY   FIREBASE_ADMIN_PRIVATE_KEY
+# Full walkthrough: docs/AUTOMATION_SETUP.md
