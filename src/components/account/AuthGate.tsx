@@ -1,0 +1,137 @@
+"use client";
+
+import { AlertCircle, Eye, EyeOff, Mail } from "lucide-react";
+import { useState, type FormEvent } from "react";
+import { Button } from "@/components/ui/Button";
+import { TextField } from "@/components/ui/Field";
+import { profileProblem } from "@/lib/account/profile";
+import { useCustomerAuth } from "@/lib/account/useCustomerAuth";
+
+const MESSAGES: Record<string, string> = {
+  "auth/invalid-credential": "That email and password don't match. Check them, or use \"Forgot password\".",
+  "auth/wrong-password": "That email and password don't match. Check them, or use \"Forgot password\".",
+  "auth/user-not-found": "No account with that email yet. Switch to \"Create account\" below.",
+  "auth/email-already-in-use": "That email already has an account. Switch to \"Sign in\" below.",
+  "auth/weak-password": "Use at least 6 characters.",
+  "auth/invalid-email": "Enter a valid email address.",
+  "auth/too-many-requests": "Too many attempts. Wait a few minutes, then try again.",
+  "auth/network-request-failed": "Can't reach Firebase. Check your internet connection.",
+  "auth/popup-closed-by-user": "The Google sign-in window was closed before finishing.",
+  "auth/cancelled-popup-request": "The Google sign-in window was closed before finishing.",
+  "auth/unauthorized-domain": "Google sign-in isn't enabled for this website address yet. The site owner must add it in Firebase Console -> Authentication -> Settings -> Authorized domains.",
+  "auth/operation-not-allowed": "Google sign-in isn't switched on yet. The site owner must enable it in Firebase Console -> Authentication -> Sign-in method.",
+  "auth/account-exists-with-different-credential": "That email already has a password-based account here. Sign in with your password instead - or contact support to link Google to it.",
+};
+
+/** Looks up a friendly message; for an unlisted website address it also says exactly which address to add in Firebase. */
+const describe = (err: unknown, fallback: string): string => {
+  const code = (err as { code?: string }).code ?? "";
+  if (code === "auth/unauthorized-domain" && typeof window !== "undefined") return `${MESSAGES[code]} The address to add is: ${window.location.hostname}`;
+  return MESSAGES[code] ?? fallback;
+};
+
+/** Sign in / create account, shown when nobody is signed in yet. Creating an account asks for name, shop name and phone up front;
+ *  signing in with Google skips that, and the account page asks for the same details right after. */
+export function AuthGate({ initialMode = "signin" }: { initialMode?: "signin" | "signup" }) {
+  const auth = useCustomerAuth();
+  const [mode, setMode] = useState<"signin" | "signup">(initialMode);
+  const [showPassword, setShowPassword] = useState(false);
+  const [name, setName] = useState("");
+  const [businessName, setBusinessName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const [sent, setSent] = useState(false);
+  const [googleBusy, setGoogleBusy] = useState(false);
+
+  const withGoogle = async () => {
+    setError("");
+    setGoogleBusy(true);
+    try {
+      await auth.signInWithGoogle();
+    } catch (err) {
+      setError(describe(err, "Couldn't sign in with Google. Try again."));
+    } finally {
+      setGoogleBusy(false);
+    }
+  };
+
+  const submit = async (e: FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setBusy(true);
+    try {
+      if (mode === "signup") {
+        const problem = profileProblem({ name, businessName, phone });
+        if (problem) { setError(problem); return; }
+        await auth.signUp(email.trim(), password, { name: name.trim(), businessName: businessName.trim(), phone: phone.trim() });
+        setSent(true);
+      }
+      else await auth.signIn(email.trim(), password);
+    } catch (err) {
+      setError(describe(err, err instanceof Error ? err.message : "Something went wrong."));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  if (sent) {
+    return (
+      <div className="mx-auto w-full max-w-md rounded-xl3 border border-line bg-surface p-8 text-center shadow-card">
+        <Mail className="mx-auto mb-3 h-8 w-8 text-accent-strong" />
+        <h2 className="font-display text-xl font-bold text-ink-900">Check your email</h2>
+        <p className="mt-2 text-sm text-muted">We sent a verification link to <strong>{email}</strong>. Open it, then come back and sign in.</p>
+        <Button className="mt-6" onClick={() => { setSent(false); setMode("signin"); }}>Go to sign in</Button>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={submit} className="mx-auto w-full max-w-md space-y-5 rounded-xl3 border border-line bg-surface p-8 shadow-card">
+      <button type="button" onClick={withGoogle} disabled={googleBusy}
+        className="flex w-full items-center justify-center gap-3 rounded-field border border-line bg-white py-2.5 text-sm font-semibold text-ink-800 shadow-sm transition hover:bg-ink-50 disabled:opacity-60">
+        <svg viewBox="0 0 48 48" className="h-[18px] w-[18px]" aria-hidden>
+          <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.9 32.6 29.4 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l5.7-5.7C34.6 6.1 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.5z" />
+          <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.8 1.1 8 3l5.7-5.7C34.6 6.1 29.6 4 24 4c-7.6 0-14.2 4.3-17.7 10.7z" />
+          <path fill="#4CAF50" d="M24 44c5.4 0 10.4-2.1 14.1-5.5l-6.5-5.5C29.5 34.9 26.9 36 24 36c-5.3 0-9.8-3.4-11.4-8.1l-6.6 5.1C9.7 39.6 16.3 44 24 44z" />
+          <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.2 5.7l6.5 5.5C41.5 36.4 44 30.7 44 24c0-1.3-.1-2.6-.4-3.5z" />
+        </svg>
+        Continue with Google
+      </button>
+      <p className="-mt-2 text-center text-xs text-muted">Google verifies your email for you. You&apos;ll add your shop details on the next screen.</p>
+      <div className="flex items-center gap-3 text-xs text-muted"><span className="h-px flex-1 bg-line" />or<span className="h-px flex-1 bg-line" /></div>
+      <div className="flex rounded-field bg-ink-100 p-1 text-sm font-semibold">
+        {(["signin", "signup"] as const).map((m) => (
+          <button key={m} type="button" onClick={() => { setMode(m); setError(""); }}
+            className={`flex-1 rounded-[8px] py-2 transition ${mode === m ? "bg-white text-ink-900 shadow-sm" : "text-muted"}`}>
+            {m === "signin" ? "Sign in" : "Create account"}
+          </button>
+        ))}
+      </div>
+      {mode === "signup" && (
+        <>
+          <TextField label="Your full name" autoComplete="name" required value={name} onChange={(e) => setName(e.target.value)} />
+          <TextField label="Shop or business name" autoComplete="organization" required value={businessName} onChange={(e) => setBusinessName(e.target.value)} />
+          <TextField label="Phone number" type="tel" autoComplete="tel" required inputMode="tel" hint="We only use it to help with your licence and setup." value={phone} onChange={(e) => setPhone(e.target.value)} />
+        </>
+      )}
+      <TextField label="Email" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+      <div className="relative">
+        <TextField label="Password" type={showPassword ? "text" : "password"} autoComplete={mode === "signup" ? "new-password" : "current-password"} required minLength={mode === "signup" ? 8 : 6} hint={mode === "signup" ? "At least 8 characters." : undefined} value={password} onChange={(e) => setPassword(e.target.value)} />
+        <button type="button" onClick={() => setShowPassword((v) => !v)} aria-label={showPassword ? "Hide password" : "Show password"} className="absolute right-2.5 top-[30px] rounded p-1 text-muted hover:text-ink-800">
+          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+        </button>
+      </div>
+      {error && <p className="flex items-start gap-2 rounded-field bg-bad/10 p-3 text-sm text-[#A22B3B]"><AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />{error}</p>}
+      <Button type="submit" size="lg" className="w-full" loading={busy}>{mode === "signup" ? "Create account" : "Sign in"}</Button>
+      {mode === "signin" && (
+        <button type="button" className="w-full text-center text-xs font-medium text-muted hover:text-ink-800"
+          onClick={async () => { if (!email.trim()) return setError("Enter your email above first."); try { await auth.resetPassword(email.trim()); setError("Password reset email sent."); } catch { setError("Couldn't send that. Check the email address."); } }}>
+          Forgot password?
+        </button>
+      )}
+    </form>
+  );
+}
