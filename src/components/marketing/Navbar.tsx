@@ -20,7 +20,10 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 140, damping: 26, mass: 0.4 });
-  useEffect(() => setOpen(false), [pathname]);
+  useEffect(() => {
+    setOpen(false);
+    if (window.scrollX !== 0) window.scrollTo({ left: 0, top: window.scrollY });
+  }, [pathname]);
   useEffect(() => {
     const on = () => setScrolled(window.scrollY > 8);
     on();
@@ -29,7 +32,7 @@ export function Navbar() {
   }, []);
 
   return (
-    <header className={cn("sticky top-0 z-50 transition-colors duration-200", scrolled || open ? "glass border-b border-white/10" : "bg-ink-900 border-b border-transparent")}>
+    <header className={cn("sticky top-0 z-50 w-full max-w-full transition-colors duration-200", scrolled || open ? "glass border-b border-white/10" : "bg-ink-900 border-b border-transparent")}>
       <a href="#content" className="sr-only focus:not-sr-only focus:absolute focus:left-3 focus:top-3 focus:rounded-field focus:bg-accent focus:px-3 focus:py-2 focus:text-accent-ink">Skip to content</a>
       <div className="mx-auto flex h-[68px] max-w-6xl items-center gap-10 px-5">
         <Link href="/" aria-label="Malek Enterprise POS home"><Logo tone="light" /></Link>

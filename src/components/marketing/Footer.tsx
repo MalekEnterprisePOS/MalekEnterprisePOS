@@ -3,8 +3,8 @@ import { Logo } from "@/components/ui/Logo";
 import { Barcode } from "./Barcode";
 
 const columns = [
-  { title: "Product", links: [["Features", "/features"], ["Pricing", "/pricing"], ["Releases", "/releases"], ["Download", "/download"], ["Setup guide", "/setup"]] },
-  { title: "Company", links: [["About", "/about"], ["Contact", "/contact"], ["Support", "/support"]] },
+  { title: "Product", links: [["Features", "/features"], ["Pricing", "/pricing"], ["Setup", "/setup"], ["Releases", "/releases"], ["Download", "/download"]] },
+  { title: "Company", links: [["About", "/about"], ["Contact", "/contact"], ["My account", "/account"]] },
   { title: "Legal", links: [["Terms", "/terms"], ["Privacy", "/privacy"]] },
 ] as const;
 

@@ -2,24 +2,24 @@ import type { Metadata } from "next";
 import { PageBand } from "@/components/marketing/PageBand";
 import { ButtonLink } from "@/components/ui/Button";
 
-export const metadata: Metadata = { title: "About", description: "Why Malek Enterprise POS keeps its database in your shop." };
+export const metadata: Metadata = { title: "About", description: "Why Malek Enterprise POS keeps its database in your shop and builds around real South African retail and hardware workflows." };
 
 const principles = [
-  ["Your data stays yours", "Sales live on a server in your shop. Reports are fast, and there's nothing to migrate if you ever change your mind."],
-  ["The till comes first", "Tills talk to your local network, not a distant data centre, so a slow internet line never slows a sale."],
-  ["Fair and simple pricing", "You pay per till, month to month, in rand. No surprises on the invoice."],
+  ["Your data stays yours", "Sales, stock, debtors, and creditors live on a PostgreSQL server in your shop. Reports are instant, and nothing is locked inside a third-party cloud."],
+  ["The counter and yard come first", "From SARS Section 20 3-tier tax invoicing and blind cash-ups to yard gate-passes, CPA Section 62 laybys, and 5-bucket aging—every screen is built around daily store operations."],
+  ["Fair and simple pricing", "You pay per till, month to month, in rand, with every module included out of the box and no surprise add-on fees."],
 ];
 
 export default function AboutPage() {
   return (
     <>
-      <PageBand title="Software for shops that need the till to work." />
+      <PageBand title="Software for shops that need the till to work." lede="Built around the real counter, cash office, and yard workflows of South African retail and hardware stores." />
       <div className="bg-paper py-16">
         <div className="mx-auto max-w-6xl px-5">
           <div className="grid gap-10 md:grid-cols-[1.1fr_0.9fr]">
             <div className="space-y-6 text-[19px] leading-relaxed text-ink-800">
-              <p>Malek Enterprise POS started as software for a working retail store, written around what that store needed every day: quick sales, accurate stock, proper goods received vouchers, and prices that hold a healthy margin.</p>
-              <p>Most modern point-of-sale products live in someone else&apos;s cloud. That works until the line drops, the till freezes and there&apos;s a queue at the counter. We took the opposite approach: the database runs in your shop, the tills connect to it directly, and the internet is only used for the licence check.</p>
+              <p>Malek Enterprise POS started as software for a working South African store, written around what that business needed every day: fast sales with SARS Section 20 tax compliance, blind cash-ups with safe-drop alerts, accurate Available-to-Sell stock across the yard and layby room, proper goods received vouchers with Landed WAC, and 5-bucket debtor and creditor ledgers.</p>
+              <p>Most modern point-of-sale products live in someone else&apos;s cloud. That works until load-shedding hits or the fibre line drops, the till freezes, and there&apos;s a queue of customers and contractors at the counter. We took the opposite approach: the PostgreSQL database runs on your own shop server, client tills discover it automatically over your local LAN behind an Admin Device Approval Gate, and the internet is only used for a brief daily licence check.</p>
             </div>
             <ul className="space-y-4">
               {principles.map(([t, d], i) => (
@@ -30,7 +30,11 @@ export default function AboutPage() {
               ))}
             </ul>
           </div>
-          <div className="mt-12"><ButtonLink href="/contact" variant="dark" size="lg">Get in touch</ButtonLink></div>
+          <div className="mt-12 flex flex-wrap gap-3">
+            <ButtonLink href="/features" variant="dark" size="lg">Explore all features</ButtonLink>
+            <ButtonLink href="/setup" variant="secondary" size="lg">See 2-step LAN setup</ButtonLink>
+            <ButtonLink href="/contact" variant="secondary" size="lg">Get in touch</ButtonLink>
+          </div>
         </div>
       </div>
     </>

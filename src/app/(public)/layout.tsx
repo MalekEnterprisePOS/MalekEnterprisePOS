@@ -9,7 +9,7 @@ export default async function PublicLayout({ children }: { children: React.React
   return (
     <>
       <Navbar />
-      <main id="content">{children}</main>
+      <main id="content" className="w-full max-w-full overflow-x-clip">{children}</main>
       <Footer supportEmail={supportEmail || undefined} />
     </>
   );

@@ -137,8 +137,21 @@ export function buildDemoSeed(now: Date = new Date()): DemoSeed {
   out.pricing!.default = {
     currency: "ZAR", billingFrequency: "monthly", headline: "Pay per till, month to month.", subtitle: "One licence covers the shop server and every till you register against it.",
     plans: [
-      { id: "standard", name: "Standard", description: "Everything a single-shop retailer needs to trade.", pricePerTerminal: 500, minTerminals: 1, maxTerminals: 3, frequencies: ["monthly", "quarterly", "annual"], discountQuarterly: 5, discountAnnual: 15, features: ["Sales, receipts and cash-up", "Stock control across every till", "Goods received vouchers (GRV)", "Price maintenance by markup or GP%", "Sales, stock and margin reports", "Works through internet outages"], highlighted: true },
-      { id: "volume", name: "Volume", description: "For shops running four or more tills.", pricePerTerminal: 350, minTerminals: 4, maxTerminals: 50, frequencies: ["monthly", "annual"], discountQuarterly: 0, discountAnnual: 20, features: ["Everything in Standard", "Lower price per till", "Priority support by phone", "Free installation assistance"], highlighted: false },
+      { id: "standard", name: "Standard", description: "Everything a single-shop retailer needs to trade.", pricePerTerminal: 500, minTerminals: 1, maxTerminals: 3, frequencies: ["monthly", "quarterly", "annual"], discountQuarterly: 5, discountAnnual: 15, features: [
+          "SARS Section 20 3-tier tax invoicing, 10c rounding & 4-way split tenders",
+          "Shift control, live safe-drop alerts & blind cash-up (Z-Report)",
+          "Live Available-to-Sell (ATS) stock, 12-month GP matrix & Bin Cards",
+          "Debtors & Creditors with 5-bucket aging (0–30 to 120+ days) & price tiers",
+          "Yard gate-passes, staged dispatches & CPA Section 62 laybys",
+          "PO to GRV, Break-Bulk UOM, Landed WAC & post-GRV barcode labels",
+          "2-step local LAN setup, Admin Device Approval Gate & 7-day offline lease",
+        ], highlighted: true },
+      { id: "volume", name: "Volume", description: "For shops running four or more tills.", pricePerTerminal: 350, minTerminals: 4, maxTerminals: 50, frequencies: ["monthly", "annual"], discountQuarterly: 0, discountAnnual: 20, features: [
+          "Everything in Standard across all counter, trade, and yard tills",
+          "Lower monthly rate per registered till",
+          "Priority support by phone & WhatsApp",
+          "Assisted Shop Server, LAN & printer setup",
+        ], highlighted: false },
     ],
   };
   out.settings!.app = {

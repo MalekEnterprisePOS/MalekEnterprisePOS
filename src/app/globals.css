@@ -37,8 +37,8 @@
 }
 
 @layer base {
-  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
-  body { @apply bg-paper font-sans text-ink-900 antialiased; font-feature-settings: "ss01", "cv11"; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; overflow-x: clip; }
+  body { @apply bg-paper font-sans text-ink-900 antialiased; font-feature-settings: "ss01", "cv11"; overflow-x: clip; }
   h1, h2, h3, h4 { @apply font-display tracking-tight; }
   :focus-visible { outline: 2px solid rgb(var(--accent-strong)); outline-offset: 2px; border-radius: 6px; }
   ::selection { background: rgb(var(--accent) / 0.55); }
